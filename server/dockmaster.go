@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,7 @@ var config Config
 //Container a single container
 type Container struct {
 	AgentID    string `json:"agentid"`
+	ID         string `json:"id"`
 	Name       string `json:"name"`
 	BuildNode  string `json:"node"`
 	RunningCmd string `json:"cmd"`
@@ -85,6 +87,7 @@ func listContainers(c *gin.Context) {
 func addContainer(c *gin.Context) {
 	conts := Containers{}
 	c.BindJSON(&conts)
+	log.Println(conts)
 	err := mdb.Save(conts)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{"error while saving container: " + err.Error()})
