@@ -14,12 +14,12 @@ public class Agent {
 		this.id = id;
 	}
 
-	public void publishContainers() {
+	public void publishContainers(Integer expire) {
 		List<Container> containers = docker.getContainers();
 		if(containers == null){
 			return;
 		}
-		master.synchronize(id, containers);
+		master.synchronize(id, expire, containers);
 	}
 
 }

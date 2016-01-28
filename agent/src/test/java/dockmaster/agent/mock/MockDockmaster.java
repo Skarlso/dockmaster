@@ -17,7 +17,7 @@ public class MockDockmaster implements Dockmaster{
 	}
 
 	@Override
-	public void synchronize(String id, List<Container> containers) {
+	public void synchronize(String id, Integer expire, List<Container> containers) {
 		map.put(id, containers);
 	}
 	

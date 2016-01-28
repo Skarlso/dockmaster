@@ -34,10 +34,10 @@ public final class RemoteDockmaster implements Dockmaster, Closeable {
 	}
 
 	@Override
-	public void synchronize(String id, List<Container> containers) {
+	public void synchronize(String id, Integer expire, List<Container> containers) {
 		WebTarget target = client.target(uri);
 
-		post(target.path("api").path("1").path("add"), new SynchronizeRequest(id,toDTO(containers)));
+		post(target.path("api").path("1").path("add"), new SynchronizeRequest(id,expire,toDTO(containers)));
 	}
 
 	private List<ContainerDTO> toDTO(List<Container> containers) {
@@ -53,7 +53,7 @@ public final class RemoteDockmaster implements Dockmaster, Closeable {
 			Builder request = target.request(MediaType.APPLICATION_JSON);
 			request.async().post(Entity.json(entity)).get();
 		} catch (ExecutionException | MultiException | InterruptedException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 

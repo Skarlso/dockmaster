@@ -25,7 +25,7 @@ public class AgentAT {
 		MockDockmaster dockmaster = new MockDockmaster();
 		
 		Agent agent = new Agent(AGENT_ID,docker, dockmaster);
-		agent.publishContainers();
+		agent.publishContainers(null);
 		
 		assertThat(dockmaster.getContainers(AGENT_ID),hasItems(container,other_container));
 	}
