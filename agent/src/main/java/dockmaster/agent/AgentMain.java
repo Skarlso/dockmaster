@@ -59,12 +59,12 @@ public class AgentMain {
 		}
 	}
 
-	private int millis;
+	private int seconds;
 	private URI uri;
 	private String id;
 
 	public AgentMain() {
-		this.millis = 5000;
+		this.seconds = 5;
 	}
 
 	private void run() {
@@ -72,8 +72,8 @@ public class AgentMain {
 		Runtime.getRuntime().addShutdownHook(closeConnection(dockmaster));
 		Agent agent = new Agent(id, new SpotifyDockerAdapter(), dockmaster);
 		while (true) {
-			agent.publishContainers();
-			sleep(millis);
+			agent.publishContainers(seconds*2);
+			sleep(seconds*1000);
 		}
 	}
 
@@ -96,7 +96,7 @@ public class AgentMain {
 	}
 
 	public void setMillis(int millis) {
-		this.millis = millis;
+		this.seconds = millis;
 	}
 
 }

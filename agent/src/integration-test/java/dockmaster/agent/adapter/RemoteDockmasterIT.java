@@ -19,7 +19,7 @@ public class RemoteDockmasterIT {
 		URI uri = new URI(URL);
 		
 		try(RemoteDockmaster master = new RemoteDockmaster(uri)){
-			master.synchronize(AGENT_ID, Arrays.asList(new Container(CONTAINER_ID,"","","")));
+			master.synchronize(AGENT_ID, 10, Arrays.asList(new Container(CONTAINER_ID,"","","")));
 		}
 		
 	}
