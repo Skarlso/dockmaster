@@ -69,8 +69,8 @@ func main() {
 	v1 := router.Group(APIBASE)
 	{
 		v1.GET("/list", listContainers)
-		v1.POST("/add", addContainer)
-		v1.POST("/delete", deleteContainer)
+		v1.POST("/add", addContainers)
+		v1.POST("/delete", deleteContainers)
 	}
 	router.Run(":8989")
 }
@@ -85,7 +85,7 @@ func listContainers(c *gin.Context) {
 	c.JSON(http.StatusOK, containers)
 }
 
-func addContainer(c *gin.Context) {
+func addContainers(c *gin.Context) {
 	conts := Containers{}
 	c.BindJSON(&conts)
 	log.Println(conts)
@@ -97,7 +97,7 @@ func addContainer(c *gin.Context) {
 	c.JSON(http.StatusOK, Message{"Containers successfully saved."})
 }
 
-func deleteContainer(c *gin.Context) {
+func deleteContainers(c *gin.Context) {
 	conts := Containers{}
 	c.BindJSON(&conts)
 	err := mdb.Delete(conts)

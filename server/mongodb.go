@@ -1,6 +1,9 @@
 package main
 
-import "gopkg.in/mgo.v2"
+import (
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+)
 
 //Starting mongodb -> mongod --config /usr/local/etc/mongod.conf --fork
 
@@ -15,11 +18,19 @@ func (mdb MongoDBConnection) Save(c Containers) error {
 	defer mdb.session.Close()
 	co := mdb.session.DB("dockmaster").C("containers")
 	bulk := co.Bulk()
+	//One post is always affiliated to one agent. Thus, it's enough to get the first
+	//containers agentID
+	mdb.removeAllContainersForAgent(c.Containers[0].AgentID)
 	for _, con := range c.Containers {
-		// log.Println(con)
 		bulk.Insert(con)
 	}
 	_, err := bulk.Run()
+	return err
+}
+
+func (mdb MongoDBConnection) removeAllContainersForAgent(agentID string) error {
+	db := mdb.session.DB("dockmaster").C("containers")
+	_, err := db.RemoveAll(bson.M{"agentid": agentID})
 	return err
 }
 
@@ -34,21 +45,6 @@ func (mdb MongoDBConnection) Load() (results Containers, err error) {
 
 	// log.Println(results)
 	return results, err
-}
-
-//Update bulk updates containers
-func (mdb MongoDBConnection) Update(c Containers) error {
-	mdb.session = mdb.GetSession()
-	defer mdb.session.Close()
-	db := mdb.session.DB("dockmaster").C("containers")
-	bulk := db.Bulk()
-	for _, c := range c.Containers {
-		// log.Println(con)
-		bulk.Update(c)
-	}
-	_, err := bulk.Run()
-
-	return err
 }
 
 //Delete bulk deletes containers

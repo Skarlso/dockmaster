@@ -4,6 +4,5 @@ package main
 type Storage interface {
 	Save(Containers) error
 	Load() (Containers, error)
-	Update(Containers) error
 	Delete(Containers) error
 }
