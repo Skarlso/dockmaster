@@ -1,9 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"path"
 )
@@ -23,22 +23,24 @@ type Containers struct {
 	Containers []Container `json:"containers"`
 }
 
-//Page test page
-type Page struct {
-	Title string
-	Body  []byte
-}
-
 func index(w http.ResponseWriter, r *http.Request) {
-	p := Page{"Test Title", []byte("testbody")}
+	resp, _ := http.Get("http://localhost:8989/api/1/list")
+	con := Containers{}
+	decoder := json.NewDecoder(resp.Body)
+	err := decoder.Decode(&con)
+	if err != nil {
+		fmt.Fprintf(w, "error occured:"+err.Error())
+		return
+	}
+	// log.Println(con)
+
 	lp := path.Join("templates", "layout.html")
 	tmpl, err := template.ParseFiles(lp)
 	if err != nil {
 		fmt.Fprintf(w, "error occured:"+err.Error())
 		return
 	}
-	log.Println(p)
-	tmpl.Execute(w, p)
+	tmpl.Execute(w, con)
 }
 
 func main() {
