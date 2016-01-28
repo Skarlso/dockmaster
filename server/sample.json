@@ -1,0 +1,1 @@
+{"containers": [{"name": "bla","node": "node","cmd": "catalina.sh","port": 3321}, {"name": "bla2","node": "node2","cmd": "catalina2.sh","port": 3333}]}

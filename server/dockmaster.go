@@ -17,12 +17,18 @@ const APIBASE = "api/" + APIVERSION
 var mdb Storage
 var config Config
 
-//Container represents a running container
+//Container a single container
 type Container struct {
+	AgentID    string `json:"agentid"`
 	Name       string `json:"name"`
 	BuildNode  string `json:"node"`
 	RunningCmd string `json:"cmd"`
 	Port       int    `json:"port"`
+}
+
+//Containers represents a running container
+type Containers struct {
+	Containers []Container `json:"containers"`
 }
 
 //Config global configuration of the application
@@ -68,11 +74,21 @@ func main() {
 
 //index a humble welcome to a new user
 func listContainers(c *gin.Context) {
-	m := Message{}
-	m.Message = "Welcome to my RPG"
-	c.JSON(http.StatusOK, m)
+	containers, err := mdb.Load()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{"error while loading containers: " + err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, containers)
 }
 
 func addContainer(c *gin.Context) {
-
+	conts := Containers{}
+	c.BindJSON(&conts)
+	err := mdb.Save(conts)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{"error while saving container: " + err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, Message{"Container successfully saved."})
 }
