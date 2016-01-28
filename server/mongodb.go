@@ -20,11 +20,14 @@ func (mdb MongoDBConnection) Save(c []Container) error {
 	bulk := co.Bulk()
 	//One post is always affiliated to one agent. Thus, it's enough to get the first
 	//containers agentID
-	mdb.removeAllContainersForAgent(c[0].AgentID)
+	err := mdb.removeAllContainersForAgent(c[0].AgentID)
+	if err != nil {
+		return err
+	}
 	for _, con := range c {
 		bulk.Insert(con)
 	}
-	_, err := bulk.Run()
+	_, err = bulk.Run()
 	return err
 }
 
