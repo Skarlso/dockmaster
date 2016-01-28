@@ -13,10 +13,10 @@
                 <td id="agent" border="1" align="center"><h1 style="text-align:center; font-family:verdana;">{{$agent.AgentID}}</h1></td>
             </tr>
             <tr>
-                <td>ID</td>
-                <td>Name</td>
-                <td>Command</td>
-                <td>Port</td>
+                <td id="header">ID</td>
+                <td id="header">Name</td>
+                <td id="header">Command</td>
+                <td id="header">Port</td>
             </tr>
             {{range $cont := $agent.Containers}}
                 <tr>
