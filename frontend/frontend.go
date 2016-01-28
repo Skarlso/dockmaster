@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"path"
 )
@@ -27,7 +26,6 @@ func index(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "error occured:"+err.Error())
 		return
 	}
-	log.Println(con)
 
 	lp := path.Join("templates", "layout.html")
 	tmpl, err := template.ParseFiles(lp)
