@@ -18,8 +18,9 @@ type Container struct {
 
 //Agent post data from an agent with ID and containers it has.
 type Agent struct {
-	AgentID    string      `json:"agentid"`
-	Containers []Container `json:"containers"`
+	AgentID            string      `json:"agentid"`
+	ExpireAfterSeconds int         `json:"expireAfterSeconds"`
+	Containers         []Container `json:"containers"`
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
