@@ -13,8 +13,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.glassfish.hk2.api.MultiException;
 import org.glassfish.jersey.filter.LoggingFilter;
@@ -39,35 +37,23 @@ public final class RemoteDockmaster implements Dockmaster, Closeable {
 	public void synchronize(String id, List<Container> containers) {
 		WebTarget target = client.target(uri);
 
-		post(target.path("api").path("1").path("add"), toDTO(id,containers));
+		post(target.path("api").path("1").path("add"), new SynchronizeRequest(id,toDTO(containers)));
 	}
 
-	private List<ContainerDTO> toDTO(String id, List<Container> containers) {
+	private List<ContainerDTO> toDTO(List<Container> containers) {
 		ArrayList<ContainerDTO> result = new ArrayList<>();
 		for(Container c : containers){
-			result.add(new ContainerDTO(id, c));
+			result.add(new ContainerDTO(c));
 		}
 		return result;
-	}
-
-	private String message(Response response) {
-		return "Error code: " + response.getStatus();
-	}
-
-	private boolean isOK(Response response) {
-		return Status.fromStatusCode(response.getStatus()) == Status.OK;
 	}
 
 	private <T> void post(final WebTarget target, T entity) {
 		try {
 			Builder request = target.request(MediaType.APPLICATION_JSON);
-			Response response = request.async().post(Entity.json(entity)).get();
-			if (!isOK(response)) {
-				throw new RuntimeException(message(response));
-			}
+			request.async().post(Entity.json(entity)).get();
 		} catch (ExecutionException | MultiException | InterruptedException e) {
 			e.printStackTrace();
-			throw new RuntimeException(target.getUri().toString());
 		}
 	}
 

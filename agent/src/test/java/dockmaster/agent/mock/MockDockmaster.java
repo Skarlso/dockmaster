@@ -1,33 +1,24 @@
 package dockmaster.agent.mock;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import dockmaster.agent.Container;
 import dockmaster.agent.Dockmaster;
-import dockmaster.agent.adapter.ContainerDTO;
 
 public class MockDockmaster implements Dockmaster{
 	
-	Set<ContainerDTO> set = new HashSet<>();
+	Map<String,List<Container>> map = new HashMap<>();
 	
 	public List<Container> getContainers(String agentId) {
-		ArrayList<Container> result = new ArrayList<>();
-		for(ContainerDTO dto : set){
-			if(dto.getAgentid().equals(agentId)){
-				result.add(dto.toContainer());
-			}
-		}
-		return result;
+		return new ArrayList<>(map.get(agentId));
 	}
 
 	@Override
 	public void synchronize(String id, List<Container> containers) {
-		for(Container c : containers){
-			set.add(new ContainerDTO(id, c));
-		}
+		map.put(id, containers);
 	}
 	
 	
