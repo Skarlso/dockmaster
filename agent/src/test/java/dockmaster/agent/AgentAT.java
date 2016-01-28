@@ -1,16 +1,10 @@
 package dockmaster.agent;
 
-import static org.junit.Assert.*;
-
-
-import org.hamcrest.Matcher;
-
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import dockmaster.agent.Agent;
-import dockmaster.agent.Container;
 import dockmaster.agent.mock.MockDocker;
 import dockmaster.agent.mock.MockDockmaster;
 
@@ -24,9 +18,9 @@ public class AgentAT {
 	@Test
 	public void agentShouldReadDockerAndPublishAllContainersTo() {
 		MockDocker docker = new MockDocker();
-		Container container = new Container(CONTAINER_ID);
+		Container container = new Container(CONTAINER_ID,null,null,null);
 		docker.add(container);
-		Container other_container = new Container(OTHER_CONTAINER_ID);
+		Container other_container = new Container(OTHER_CONTAINER_ID,null,null,null);
 		docker.add(other_container);
 		MockDockmaster dockmaster = new MockDockmaster();
 		

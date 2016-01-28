@@ -1,30 +1,52 @@
-package dockmaster.agent.mock;
+package dockmaster.agent.adapter;
 
 import dockmaster.agent.Container;
 
-class ContainerDTO {
+public class ContainerDTO {
 
 	private String id;
-	private String agentId;
+
+	private String name;
+
+	private String command;
+
+	private String port;
+	
+	private String agentid;
 
 	public ContainerDTO(String agentId, Container container) {
 		this.id = container.getId();
-		this.agentId = agentId;
+		this.name = container.getName();
+		this.command = container.getCommand();
+		this.port = container.getPort();
+		this.agentid = agentId;
 	}
-	
-	public String getAgentId() {
-		return agentId;
+
+	public String getAgentid() {
+		return agentid;
 	}
-	
+
 	public String getId() {
 		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getCommand() {
+		return command;
+	}
+
+	public String getPort() {
+		return port;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((agentId == null) ? 0 : agentId.hashCode());
+		result = prime * result + ((agentid == null) ? 0 : agentid.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
@@ -38,10 +60,10 @@ class ContainerDTO {
 		if (getClass() != obj.getClass())
 			return false;
 		ContainerDTO other = (ContainerDTO) obj;
-		if (agentId == null) {
-			if (other.agentId != null)
+		if (agentid == null) {
+			if (other.agentid != null)
 				return false;
-		} else if (!agentId.equals(other.agentId))
+		} else if (!agentid.equals(other.agentid))
 			return false;
 		if (id == null) {
 			if (other.id != null)
@@ -52,7 +74,7 @@ class ContainerDTO {
 	}
 
 	public Container toContainer() {
-		return new Container(id);
+		return new Container(id,name,command,port);
 	}
 
 }

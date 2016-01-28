@@ -1,6 +1,9 @@
-package dockmaster.agent;
+package dockmaster.agent.adapter;
 
 import java.util.List;
+
+import dockmaster.agent.Container;
+import dockmaster.agent.Dockmaster;
 
 public class LoggerMaster implements Dockmaster {
 

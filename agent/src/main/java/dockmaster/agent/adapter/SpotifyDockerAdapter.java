@@ -3,6 +3,8 @@ package dockmaster.agent.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerClient;
 import com.spotify.docker.client.DockerException;
@@ -27,8 +29,12 @@ public class SpotifyDockerAdapter implements Docker {
 		return result;
 	}
 
-	private Container toContainer(com.spotify.docker.client.messages.Container dockerContainer) {
-		return new Container(dockerContainer.id());
+	private Container toContainer(com.spotify.docker.client.messages.Container dc) {
+		return new Container(dc.id(),namesAsString(dc),dc.command(),dc.portsAsString());
+	}
+
+	private String namesAsString(com.spotify.docker.client.messages.Container dc) {
+		return StringUtils.join(dc.names(), ",");
 	}
 
 }

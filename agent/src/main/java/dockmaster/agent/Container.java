@@ -4,15 +4,36 @@ public class Container {
 
 	private final String id;
 	
-	public Container(String id) {
+	private final String name;
+	
+	private final String command;
+	
+	private final String port;
+	
+	
+	public Container(String id, String name, String command, String port) {
 		this.id = id;
+		this.name = name;
+		this.command = command;
+		this.port = port;
 	}
 
 	public String getId() {
 		return id;
 	}
-
 	
+	public String getName() {
+		return name;
+	}
+
+	public String getCommand() {
+		return command;
+	}
+
+	public String getPort() {
+		return port;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

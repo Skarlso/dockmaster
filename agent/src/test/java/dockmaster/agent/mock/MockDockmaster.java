@@ -7,6 +7,7 @@ import java.util.Set;
 
 import dockmaster.agent.Container;
 import dockmaster.agent.Dockmaster;
+import dockmaster.agent.adapter.ContainerDTO;
 
 public class MockDockmaster implements Dockmaster{
 	
@@ -15,7 +16,7 @@ public class MockDockmaster implements Dockmaster{
 	public List<Container> getContainers(String agentId) {
 		ArrayList<Container> result = new ArrayList<>();
 		for(ContainerDTO dto : set){
-			if(dto.getAgentId().equals(agentId)){
+			if(dto.getAgentid().equals(agentId)){
 				result.add(dto.toContainer());
 			}
 		}
