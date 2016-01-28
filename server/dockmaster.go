@@ -19,11 +19,16 @@ var config Config
 
 //Container a single container
 type Container struct {
-	AgentID    string `json:"agentid"`
 	ID         string `json:"id"`
 	Name       string `json:"name"`
 	RunningCmd string `json:"command"`
 	Port       string `json:"port"`
+}
+
+//Agent post data from an agent with ID and containers it has.
+type Agent struct {
+	AgentID    string      `json:"agentid"`
+	Containers []Container `json:"containers"`
 }
 
 //Config global configuration of the application
@@ -70,22 +75,22 @@ func main() {
 
 //index a humble welcome to a new user
 func listContainers(c *gin.Context) {
-	containers, err := mdb.Load()
+	agents, err := mdb.Load()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{"error while loading containers: " + err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, containers)
+	c.JSON(http.StatusOK, agents)
 }
 
 func addContainers(c *gin.Context) {
-	conts := []Container{}
-	err := c.BindJSON(&conts)
+	agent := Agent{}
+	err := c.BindJSON(&agent)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{"error binding json: " + err.Error()})
 		return
 	}
-	err = mdb.Save(conts)
+	err = mdb.Save(agent)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{"error while saving container: " + err.Error()})
 		return
@@ -95,13 +100,13 @@ func addContainers(c *gin.Context) {
 
 }
 func deleteContainers(c *gin.Context) {
-	conts := []Container{}
-	err := c.BindJSON(&conts)
+	agent := Agent{}
+	err := c.BindJSON(&agent)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{"error binding json: " + err.Error()})
 		return
 	}
-	err = mdb.Delete(conts)
+	err = mdb.Delete(agent)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{"error while deleting containers: " + err.Error()})
 		return

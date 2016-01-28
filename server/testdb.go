@@ -5,16 +5,16 @@ type TestDB struct {
 }
 
 //Save will save a container using test as a storage medium
-func (tdb TestDB) Save(c []Container) error {
+func (tdb TestDB) Save(a Agent) error {
 	return nil
 }
 
 //Load will load all the containers using test as a storage medium
-func (tdb TestDB) Load() (c []Container, err error) {
-	return []Container{}, nil
+func (tdb TestDB) Load() (a []Agent, err error) {
+	return []Agent{}, nil
 }
 
 //Delete will delete the containers using test as a storage medium
-func (tdb TestDB) Delete(c []Container) error {
+func (tdb TestDB) Delete(a Agent) error {
 	return nil
 }

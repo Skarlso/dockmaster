@@ -9,6 +9,12 @@ th, td {
     padding: 8px;
 }
 
+td#agent {
+    text-align: center;
+    align: center;
+    color: #009999;
+}
+
 tr:nth-child(even){background-color: #f2f2f2}
 
 th {

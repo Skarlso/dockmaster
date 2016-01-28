@@ -10,18 +10,23 @@ import (
 
 //Container a single container
 type Container struct {
-	AgentID    string `json:"agentid"`
 	ID         string `json:"id"`
 	Name       string `json:"name"`
 	RunningCmd string `json:"command"`
 	Port       string `json:"port"`
 }
 
+//Agent post data from an agent with ID and containers it has.
+type Agent struct {
+	AgentID    string      `json:"agentid"`
+	Containers []Container `json:"containers"`
+}
+
 func index(w http.ResponseWriter, r *http.Request) {
 	resp, _ := http.Get("http://localhost:8989/api/1/list")
-	con := []Container{}
+	agents := []Agent{}
 	decoder := json.NewDecoder(resp.Body)
-	err := decoder.Decode(&con)
+	err := decoder.Decode(&agents)
 	if err != nil {
 		fmt.Fprintf(w, "error occured:"+err.Error())
 		return
@@ -33,7 +38,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "error occured:"+err.Error())
 		return
 	}
-	tmpl.Execute(w, con)
+	tmpl.Execute(w, agents)
 }
 
 func main() {
