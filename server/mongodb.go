@@ -13,15 +13,15 @@ type MongoDBConnection struct {
 }
 
 //Save will save a contaier using mongodb as a storage medium
-func (mdb MongoDBConnection) Save(c Containers) error {
+func (mdb MongoDBConnection) Save(c []Container) error {
 	mdb.session = mdb.GetSession()
 	defer mdb.session.Close()
 	co := mdb.session.DB("dockmaster").C("containers")
 	bulk := co.Bulk()
 	//One post is always affiliated to one agent. Thus, it's enough to get the first
 	//containers agentID
-	mdb.removeAllContainersForAgent(c.Containers[0].AgentID)
-	for _, con := range c.Containers {
+	mdb.removeAllContainersForAgent(c[0].AgentID)
+	for _, con := range c {
 		bulk.Insert(con)
 	}
 	_, err := bulk.Run()
@@ -35,24 +35,24 @@ func (mdb MongoDBConnection) removeAllContainersForAgent(agentID string) error {
 }
 
 //Load will load the contaier using mongodb as a storage medium
-func (mdb MongoDBConnection) Load() (results Containers, err error) {
+func (mdb MongoDBConnection) Load() (results []Container, err error) {
 	mdb.session = mdb.GetSession()
 	defer mdb.session.Close()
 	c := mdb.session.DB("dockmaster").C("containers")
 
 	iter := c.Find(nil).Iter()
-	err = iter.All(&results.Containers)
+	err = iter.All(&results)
 
 	// log.Println(results)
 	return results, err
 }
 
 //Delete bulk deletes containers
-func (mdb MongoDBConnection) Delete(c Containers) error {
+func (mdb MongoDBConnection) Delete(c []Container) error {
 	mdb.session = mdb.GetSession()
 	defer mdb.session.Close()
 	db := mdb.session.DB("dockmaster").C("containers")
-	for _, con := range c.Containers {
+	for _, con := range c {
 		err := db.Remove(con)
 		if err != nil {
 			return err

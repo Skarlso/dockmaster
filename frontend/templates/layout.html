@@ -16,14 +16,14 @@
        <td>Command</td>
        <td>Port</td>
      </tr>
-    {{range $index, $element := .Containers}}
+    {{range .}}
          <tr>
-           <td>{{$element.AgentID}}</td>
-           <td>{{$element.ID}}</td>
-           <td>{{$element.Name}}</td>
-           <td>{{$element.BuildNode}}</td>
-           <td>{{$element.RunningCmd}}</td>
-           <td>{{$element.Port}}</td>
+           <td>{{.AgentID}}</td>
+           <td>{{.ID}}</td>
+           <td>{{.Name}}</td>
+           <td>{{.BuildNode}}</td>
+           <td>{{.RunningCmd}}</td>
+           <td>{{.Port}}</td>
          </tr>
     {{end}}
     </table>

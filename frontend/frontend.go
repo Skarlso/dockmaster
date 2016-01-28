@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"path"
 )
@@ -13,26 +14,20 @@ type Container struct {
 	AgentID    string `json:"agentid"`
 	ID         string `json:"id"`
 	Name       string `json:"name"`
-	BuildNode  string `json:"node"`
-	RunningCmd string `json:"cmd"`
-	Port       int    `json:"port"`
-}
-
-//Containers represents a running container
-type Containers struct {
-	Containers []Container `json:"containers"`
+	RunningCmd string `json:"command"`
+	Port       string `json:"port"`
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
 	resp, _ := http.Get("http://localhost:8989/api/1/list")
-	con := Containers{}
+	con := []Container{}
 	decoder := json.NewDecoder(resp.Body)
 	err := decoder.Decode(&con)
 	if err != nil {
 		fmt.Fprintf(w, "error occured:"+err.Error())
 		return
 	}
-	// log.Println(con)
+	log.Println(con)
 
 	lp := path.Join("templates", "layout.html")
 	tmpl, err := template.ParseFiles(lp)

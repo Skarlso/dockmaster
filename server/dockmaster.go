@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,14 +22,8 @@ type Container struct {
 	AgentID    string `json:"agentid"`
 	ID         string `json:"id"`
 	Name       string `json:"name"`
-	BuildNode  string `json:"node"`
-	RunningCmd string `json:"cmd"`
-	Port       int    `json:"port"`
-}
-
-//Containers represents a running container
-type Containers struct {
-	Containers []Container `json:"containers"`
+	RunningCmd string `json:"command"`
+	Port       string `json:"port"`
 }
 
 //Config global configuration of the application
@@ -86,21 +79,29 @@ func listContainers(c *gin.Context) {
 }
 
 func addContainers(c *gin.Context) {
-	conts := Containers{}
-	c.BindJSON(&conts)
-	log.Println(conts)
-	err := mdb.Save(conts)
+	conts := []Container{}
+	err := c.BindJSON(&conts)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{"error binding json: " + err.Error()})
+		return
+	}
+	err = mdb.Save(conts)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{"error while saving container: " + err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, Message{"Containers successfully saved."})
-}
 
+	c.JSON(http.StatusOK, Message{"Containers successfully saved."})
+
+}
 func deleteContainers(c *gin.Context) {
-	conts := Containers{}
-	c.BindJSON(&conts)
-	err := mdb.Delete(conts)
+	conts := []Container{}
+	err := c.BindJSON(&conts)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{"error binding json: " + err.Error()})
+		return
+	}
+	err = mdb.Delete(conts)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{"error while deleting containers: " + err.Error()})
 		return
