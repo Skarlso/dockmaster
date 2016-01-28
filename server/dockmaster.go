@@ -70,6 +70,7 @@ func main() {
 	{
 		v1.GET("/list", listContainers)
 		v1.POST("/add", addContainer)
+		v1.POST("/delete", deleteContainer)
 	}
 	router.Run(":8989")
 }
@@ -93,5 +94,16 @@ func addContainer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, ErrorResponse{"error while saving container: " + err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, Message{"Container successfully saved."})
+	c.JSON(http.StatusOK, Message{"Containers successfully saved."})
+}
+
+func deleteContainer(c *gin.Context) {
+	conts := Containers{}
+	c.BindJSON(&conts)
+	err := mdb.Delete(conts)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{"error while deleting containers: " + err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, Message{"Containers successfully removed."})
 }

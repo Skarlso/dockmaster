@@ -1,1 +1,1 @@
-{"containers": [{"agentid":"bla","name": "bla","node": "node","cmd": "catalina.sh","port": 3321}, {"agentid":"bla2","name": "bla2","node": "node2","cmd": "catalina2.sh","port": 3333}]}
+{"containers": [{"agentid":"agent1","id":"cont1", "name": "bla","node": "node","cmd": "catalina.sh","port": 3321}, {"agentid":"agent2","id":"cont2","name": "bla2","node": "node2","cmd": "catalina2.sh","port": 3333}]}

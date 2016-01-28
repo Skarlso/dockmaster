@@ -38,11 +38,30 @@ func (mdb MongoDBConnection) Load() (results Containers, err error) {
 
 //Update bulk updates containers
 func (mdb MongoDBConnection) Update(c Containers) error {
-	return nil
+	mdb.session = mdb.GetSession()
+	defer mdb.session.Close()
+	db := mdb.session.DB("dockmaster").C("containers")
+	bulk := db.Bulk()
+	for _, c := range c.Containers {
+		// log.Println(con)
+		bulk.Update(c)
+	}
+	_, err := bulk.Run()
+
+	return err
 }
 
 //Delete bulk deletes containers
 func (mdb MongoDBConnection) Delete(c Containers) error {
+	mdb.session = mdb.GetSession()
+	defer mdb.session.Close()
+	db := mdb.session.DB("dockmaster").C("containers")
+	for _, con := range c.Containers {
+		err := db.Remove(con)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
