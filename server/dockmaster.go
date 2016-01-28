@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,6 +29,7 @@ type Container struct {
 //Agent post data from an agent with ID and containers it has.
 type Agent struct {
 	AgentID            string      `json:"agentid"`
+	ExpireAt           time.Time   `json:"expireAt,omitempty"`
 	ExpireAfterSeconds int         `json:"expireAfterSeconds"`
 	Containers         []Container `json:"containers"`
 }
