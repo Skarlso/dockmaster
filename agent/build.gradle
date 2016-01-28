@@ -16,3 +16,36 @@ eclipse {
 	    downloadJavadoc = true
 	}
 }
+repositories{
+	mavenCentral()
+}
+
+dependencies{
+	compile 'com.spotify:docker-client:3.5.9'
+	
+	testCompile ('junit:junit:4.11')
+	testCompile 'org.jmock:jmock-junit4:2.8.1'
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+sourceSets {
+    integrationTest {
+		java {
+		    compileClasspath += main.output + test.output
+		    runtimeClasspath += main.output + test.output
+		    srcDir file('src/integration-test/java')
+		}
+		resources.srcDir file('src/integration-test/resources')
+    }
+}
+
+task integrationTest(type: Test) {
+    group "Verification"
+    description "Runs the integration tests"
+    testClassesDir = project.sourceSets.integrationTest.output.classesDir
+    classpath = project.sourceSets.integrationTest.runtimeClasspath
+}
