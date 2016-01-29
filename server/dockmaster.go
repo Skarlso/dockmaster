@@ -29,9 +29,9 @@ type Container struct {
 //Agent post data from an agent with ID and containers it has.
 type Agent struct {
 	AgentID            string      `json:"agentid"`
-	ExpireAt           time.Time   `json:"expireAt,omitempty"`
 	ExpireAfterSeconds int         `json:"expireAfterSeconds"`
 	Containers         []Container `json:"containers"`
+	CreatedAt          time.Time   `bson:"createdAt"`
 }
 
 //Config global configuration of the application

@@ -21,10 +21,9 @@ func (mdb MongoDBConnection) Save(a Agent) error {
 	db := mdb.session.DB("dockmaster").C("containers")
 	db.Remove(bson.M{"agentid": a.AgentID})
 
-	//Time Format => 2006-01-02T15:04:05Z
 	index := mgo.Index{
-		Key:         []string{"expireAt"},
-		ExpireAfter: 0,
+		Key:         []string{"createdAt"},
+		ExpireAfter: time.Second * time.Duration(a.ExpireAfterSeconds),
 	}
 
 	err := db.EnsureIndex(index)
@@ -33,8 +32,7 @@ func (mdb MongoDBConnection) Save(a Agent) error {
 	}
 	now := time.Now()
 	date := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), now.Nanosecond(), time.UTC)
-	a.ExpireAt = date.Add(time.Second * time.Duration(a.ExpireAfterSeconds))
-	// fmt.Println(a.ExpireAt)
+	a.CreatedAt = date
 	err = db.Insert(a)
 	if err != nil {
 		return err
