@@ -19,17 +19,6 @@ func (mdb MongoDBConnection) Save(a Agent) error {
 	defer mdb.session.Close()
 	db := mdb.session.DB("dockmaster").C("containers")
 	db.Remove(bson.M{"agentid": a.AgentID})
-	mdb.removeOldData()
-
-	// index := mgo.Index{
-	// 	Key:         []string{"createdAt"},
-	// 	ExpireAfter: time.Second * time.Duration(a.ExpireAfterSeconds),
-	// }
-	//
-	// err := db.EnsureIndex(index)
-	// if err != nil {
-	// 	panic(err)
-	// }
 
 	now := time.Now()
 	//This is necessary to convert time.Now() to UTC which is CET by default
@@ -43,7 +32,8 @@ func (mdb MongoDBConnection) Save(a Agent) error {
 }
 
 //removeOldData removes old data from the database on save
-func (mdb MongoDBConnection) removeOldData() {
+func (mdb MongoDBConnection) startCleansing() {
+	log.Println("Looking for old Documents to Cleanse...")
 	mdb.session = mdb.GetSession()
 	defer mdb.session.Close()
 	db := mdb.session.DB("dockmaster").C("containers")
@@ -56,7 +46,7 @@ func (mdb MongoDBConnection) removeOldData() {
 	for _, a := range agents {
 		compareNow := a.CreatedAt.Add(time.Second * time.Duration(a.ExpireAfterSeconds)).UTC()
 		if compareNow.Unix() < date.Unix() {
-			log.Println("Deleting:", a)
+			log.Println("Cleansing Old Document:", a)
 			db.Remove(bson.M{"agentid": a.AgentID})
 		}
 	}

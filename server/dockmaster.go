@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -15,8 +13,7 @@ const APIVERSION = "1"
 //APIBASE Defines the API base URI
 const APIBASE = "api/" + APIVERSION
 
-var mdb Storage
-var config Config
+var mdb MongoDBConnection
 
 //Container a single container
 type Container struct {
@@ -34,34 +31,16 @@ type Agent struct {
 	CreatedAt          time.Time   `bson:"createdAt"`
 }
 
-//Config global configuration of the application
-type Config struct {
-	Storage string `json:"Storage"`
-	DBURL   string `json:"DBURL"`
-}
-
-func getConfiguration() (c Config) {
-	dat, err := ioutil.ReadFile("config.json")
-	if err != nil {
-		panic(err)
-	}
-
-	if err = json.Unmarshal(dat, &c); err != nil {
-		panic(err)
-	}
-
-	return
-}
-
 func init() {
-	config := getConfiguration()
-
-	switch config.Storage {
-	case "mongodb":
-		mdb = MongoDBConnection{}
-	case "test":
-		mdb = TestDB{}
-	}
+	mdb = MongoDBConnection{}
+	go func() {
+		for {
+			//This will remove old data periodically at every minute.
+			//Mongodb's own cleanser also ticks at every 60 seconds.
+			mdb.startCleansing()
+			time.Sleep(time.Minute)
+		}
+	}()
 }
 
 // The main function which starts the rpg
