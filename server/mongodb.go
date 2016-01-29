@@ -1,13 +1,12 @@
 package main
 
 import (
+	"log"
 	"time"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
-
-//Starting mongodb -> mongod --config /usr/local/etc/mongod.conf --fork
 
 //MongoDBConnection Encapsulates a connection to a database
 type MongoDBConnection struct {
@@ -20,7 +19,7 @@ func (mdb MongoDBConnection) Save(a Agent) error {
 	defer mdb.session.Close()
 	db := mdb.session.DB("dockmaster").C("containers")
 	db.Remove(bson.M{"agentid": a.AgentID})
-
+	mdb.removeOldData()
 	index := mgo.Index{
 		Key:         []string{"createdAt"},
 		ExpireAfter: time.Second * time.Duration(a.ExpireAfterSeconds),
@@ -30,7 +29,9 @@ func (mdb MongoDBConnection) Save(a Agent) error {
 	if err != nil {
 		panic(err)
 	}
+
 	now := time.Now()
+	//This is necessary to convert time.Now() to UTC which is CET by default
 	date := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), now.Nanosecond(), time.UTC)
 	a.CreatedAt = date
 	err = db.Insert(a)
@@ -38,6 +39,26 @@ func (mdb MongoDBConnection) Save(a Agent) error {
 		return err
 	}
 	return nil
+}
+
+//removeOldData removes old data from the database on save
+func (mdb MongoDBConnection) removeOldData() {
+	mdb.session = mdb.GetSession()
+	defer mdb.session.Close()
+	db := mdb.session.DB("dockmaster").C("containers")
+	agents := []Agent{}
+	iter := db.Find(nil).Iter()
+	iter.All(&agents)
+	now := time.Now()
+	//time.Now stays in CET even after time.Now().UTC(). Which means this is needed to force it to UTC.
+	date := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), now.Nanosecond(), time.UTC)
+	for _, a := range agents {
+		compareNow := a.CreatedAt.Add(time.Second * time.Duration(a.ExpireAfterSeconds)).UTC()
+		if compareNow.Unix() < date.Unix() {
+			log.Println("Deleting:", a)
+			db.Remove(bson.M{"agentid": a.AgentID})
+		}
+	}
 }
 
 //Load will load the contaier using mongodb as a storage medium
@@ -49,7 +70,6 @@ func (mdb MongoDBConnection) Load() (a []Agent, err error) {
 	iter := c.Find(nil).Iter()
 	err = iter.All(&a)
 
-	// log.Println(results)
 	return a, err
 }
 
