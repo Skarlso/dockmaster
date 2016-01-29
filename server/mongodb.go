@@ -20,21 +20,22 @@ func (mdb MongoDBConnection) Save(a Agent) error {
 	db := mdb.session.DB("dockmaster").C("containers")
 	db.Remove(bson.M{"agentid": a.AgentID})
 	mdb.removeOldData()
-	index := mgo.Index{
-		Key:         []string{"createdAt"},
-		ExpireAfter: time.Second * time.Duration(a.ExpireAfterSeconds),
-	}
 
-	err := db.EnsureIndex(index)
-	if err != nil {
-		panic(err)
-	}
+	// index := mgo.Index{
+	// 	Key:         []string{"createdAt"},
+	// 	ExpireAfter: time.Second * time.Duration(a.ExpireAfterSeconds),
+	// }
+	//
+	// err := db.EnsureIndex(index)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	now := time.Now()
 	//This is necessary to convert time.Now() to UTC which is CET by default
 	date := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), now.Nanosecond(), time.UTC)
 	a.CreatedAt = date
-	err = db.Insert(a)
+	err := db.Insert(a)
 	if err != nil {
 		return err
 	}
