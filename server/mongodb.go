@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"gopkg.in/mgo.v2"
@@ -32,8 +31,10 @@ func (mdb MongoDBConnection) Save(a Agent) error {
 	if err != nil {
 		panic(err)
 	}
-	a.ExpireAt = time.Now().Add(time.Second * time.Duration(a.ExpireAfterSeconds))
-	fmt.Println(a.ExpireAt)
+	now := time.Now()
+	date := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second(), now.Nanosecond(), time.UTC)
+	a.ExpireAt = date.Add(time.Second * time.Duration(a.ExpireAfterSeconds))
+	// fmt.Println(a.ExpireAt)
 	err = db.Insert(a)
 	if err != nil {
 		return err
